@@ -1,0 +1,69 @@
+version: '3'
+services:
+  api:
+    build:
+      context: ./apigw
+      dockerfile: Dockerfile
+    ports:
+      - "4000:4000"
+    depends_on:
+      - authservice
+      - redis
+      - salchipapitas
+    networks:
+      - mynetwork
+
+  authservice:
+    build:
+      context: ./authservice
+    ports:
+      - "3000:3000"
+    depends_on:
+      - redis
+    networks:
+      - mynetwork
+
+  redis:
+    image: "redis:latest"
+    ports:
+      - "6379:6379"
+    networks:
+      - mynetwork
+
+  salchipapitas:
+    build:
+      context: ./salchipapitas
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    depends_on:
+      - authservice
+      - redis
+    networks:
+      - mynetwork
+
+  besoscerezas:
+    build:
+      context: ./besoscerezas
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - redis
+    networks:
+      - mynetwork
+
+  cachetadacontrucha:
+    build:
+      context: ./cachetadacontrucha
+      dockerfile: Dockerfile
+    ports:
+      - "6000:6000"
+    depends_on:
+      - redis
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:
+    driver: bridge
